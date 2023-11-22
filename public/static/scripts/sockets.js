@@ -5,7 +5,7 @@ const connectWebSocket = () => {
 
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        createElement(data.username, data.message);
+        createElement(data.username, data.message, new Date(data.timestamp));
     };
 
     socket.onerror = (e) => {
@@ -27,7 +27,7 @@ const sendMessage = (username) => {
     const input = document.getElementById("input");
 
     if (socket.readyState === WebSocket.OPEN) {
-        const data = JSON.stringify({ username, message: input.value });
+        const data = JSON.stringify({ username, message: input.value, timestamp: new Date() });
         socket.send(data);
         input.value = "";
     } else {
