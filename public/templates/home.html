@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Live Chat: Home</title>
+        <link rel="stylesheet" href="/static/css/main.css" />
+        <script src="https://unpkg.com/htmx.org@1.9.8"></script>
+        <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    </head>
+    <body
+        class="bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center w-full h-screen"
+    >
+        <nav
+            class="w-full py-4 flex items-center justify-between border-b border-primary-500 shadow-md shadow-primary-800 fixed top-0 z-20"
+        >
+            <h1 class="text-4xl px-5 font-semibold text-primary-500">
+                Live Chat
+            </h1>
+            <p class="text-white" id="notification"></p>
+            <button
+                class="text-xl mx-5 px-2 py-1 rounded-md text-red-500 hover:bg-red-300 hover:text-red-700 transition-all duration-100"
+                hx-get="/logout"
+            >
+                Logout
+            </button>
+        </nav>
+
+        <div
+            class="w-4/5 h-4/5 rounded-md border-2 border-primary-700 flex flex-col"
+        >
+            <div
+                id="message_list"
+                class="w-full h-5/6 px-6 p-3 text-white overflow-y-auto"
+            ></div>
+            <div class="w-full h-1/6 flex items-center justify-center">
+                <p class="text-white mx-4 text-lg">
+                    <span class="text-primary-300">{{.User.Username}}</span>
+                </p>
+                <input
+                    type="text"
+                    name="newMessage"
+                    class="w-2/3 border border-primary-500 rounded-md p-2 bg-transparent text-white outline-none"
+                    placeholder="Enter message"
+                    id="input"
+                />
+                <button
+                    class="rounded-md bg-primary-500 px-3 py-2 mx-4 text-white"
+                    onclick="sendMessage('{{.User.Username}}')"
+                >
+                    Send
+                </button>
+            </div>
+        </div>
+
+        <script src="/static/scripts/sockets.js"></script>
+        <script>
+            document.getElementById("input").addEventListener("keydown", event => {
+                if (event.key === "Enter") {
+                    sendMessage("{{.User.Username}}");
+                }
+            });
+
+            const createElement = (sender, message) => {
+                const list = document.getElementById("message_list");
+                const msg = document.createElement("p");
+                const isSender = sender == "{{.User.Username}}"
+                if (isSender) {
+                    msg.innerHTML = `<p class="my-2"><span class="text-primary-300 font-bold">${sender}</span> >> ${message} </p>`;
+                } else {
+                    msg.innerHTML = `<p class="my-2 text-primary-300"><span class="font-semibold">${sender}</span> >> ${message} </p>`;
+                }
+                list.appendChild(msg);
+            };
+        </script>
+    </body>
+</html>
