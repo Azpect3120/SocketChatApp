@@ -35,7 +35,7 @@
             ></div>
             <div class="w-full h-1/6 flex items-center justify-center">
                 <p class="text-white mx-4 text-lg">
-                    <span class="text-primary-300">{{.User.Username}}</span>
+                    <span class="text-primary-300">{{ .User.Username }}</span>
                 </p>
                 <input
                     type="text"
@@ -55,6 +55,16 @@
 
         <script src="/static/scripts/sockets.js"></script>
         <script>
+            const data = JSON.parse("{{ .MessagesJSON }}");
+            data.forEach((msg) => {
+                console.log(msg);
+                createElement(
+                    msg.username,
+                    msg.message,
+                    new Date(msg.timestamp)
+                );
+            });
+
             document
                 .getElementById("input")
                 .addEventListener("keydown", (event) => {
@@ -63,7 +73,7 @@
                     }
                 });
 
-            const createElement = (sender, message, timestamp) => {
+            function createElement(sender, message, timestamp) {
                 const list = document.getElementById("message_list");
                 const msg = document.createElement("p");
                 const isSender = sender == "{{.User.Username}}";
@@ -75,7 +85,10 @@
                     second: "numeric",
                 };
 
-                const formattedTimestamp = timestamp.toLocaleString("en-US", tsOptions);
+                const formattedTimestamp = timestamp.toLocaleString(
+                    "en-US",
+                    tsOptions
+                );
 
                 if (isSender) {
                     msg.innerHTML = `<p class="my-2"><span>${formattedTimestamp}</span> <span class="text-primary-300 font-bold">${sender}</span> >> ${message} </p>`;
@@ -83,7 +96,7 @@
                     msg.innerHTML = `<p class="my-2 text-primary-300"><span class="text-white">${formattedTimestamp}</span> <span class="font-semibold">${sender}</span> >> ${message} </p>`;
                 }
                 list.appendChild(msg);
-            };
+            }
         </script>
     </body>
 </html>

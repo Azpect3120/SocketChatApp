@@ -65,13 +65,13 @@ func (s *Server) SetupRoutes() {
 	s.Router.GET("/", RenderIndexPage)
 	s.Router.GET("/login", RenderLoginPage)
 	s.Router.GET("/signup", RenderSignupPage)
-	s.Router.GET("/home", RenderHomePage)
+	s.Router.GET("/home", func(ctx *gin.Context) { RenderHomePage(ctx, s.Database)} )
 
 	s.Router.POST("/users", CreateUser)
 	s.Router.POST("/login", VerifyUser)
 	s.Router.GET("/logout", Logout)
 
-	s.Router.GET("/ws", OpenSocket)
+	s.Router.GET("/ws", func(ctx *gin.Context) { OpenSocket(ctx, s.Database) })
 }
 
 func (s *Server) Run(port string) error {

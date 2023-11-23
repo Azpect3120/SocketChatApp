@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/Azpect3120/ChatApp/database"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -23,7 +24,7 @@ var (
 )
 
 // Open a socket connection on the back-end
-func OpenSocket (ctx *gin.Context) {
+func OpenSocket (ctx *gin.Context, db *database.Database) {
 	// Convert HTTP connection to WS connection
 	conn, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
@@ -53,6 +54,8 @@ func OpenSocket (ctx *gin.Context) {
 		}
 
 		broadCastMessage(messageType, message)
+		db.AddMessage(message)
+
 	}
 
 }
