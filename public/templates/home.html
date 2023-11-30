@@ -86,6 +86,9 @@
                     hour12: false,
                     minute: "numeric",
                     second: "numeric",
+                    day: "numeric",
+                    month: "numeric",
+                    year: "numeric"
                 };
 
                 const formattedTimestamp = timestamp.toLocaleString(
@@ -94,9 +97,9 @@
                 );
 
                 if (isSender) {
-                    msg.innerHTML = `<p class="my-2"><span>${formattedTimestamp}</span> <span class="text-primary-300 font-bold">${sender}</span> >> ${message} </p>`;
+                    msg.innerHTML = `<p class="my-2"><span class="text-xs">${formattedTimestamp}</span> <span class="text-primary-300 font-bold">${sender}</span> >> ${message} </p>`;
                 } else {
-                    msg.innerHTML = `<p class="my-2 text-primary-300"><span class="text-white">${formattedTimestamp}</span> <span class="font-semibold">${sender}</span> >> ${message} </p>`;
+                    msg.innerHTML = `<p class="my-2 text-primary-300"><span class="text-xs text-white">${formattedTimestamp}</span> <span class="font-semibold">${sender}</span> >> ${message} </p>`;
                 }
                 list.appendChild(msg);
             }
