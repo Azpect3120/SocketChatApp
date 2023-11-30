@@ -65,6 +65,9 @@
                 );
             });
 
+            const list = document.getElementById("message_list");
+            list.scrollTop = list.scrollHeight;
+
             document
                 .getElementById("input")
                 .addEventListener("keydown", (event) => {
@@ -97,6 +100,7 @@
                 }
                 list.appendChild(msg);
             }
+
         </script>
     </body>
 </html>
