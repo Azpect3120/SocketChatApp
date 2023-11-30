@@ -40,7 +40,7 @@ func (db *Database) AddMessage(message []byte) {
 func (db *Database) GetMessages() []MessageData {
 	var messages []MessageData
 
-	var statement string = "SELECT * FROM messages;"
+	var statement string = "SELECT * FROM messages ORDER BY timestamp DESC LIMIT 25;"
 	rows, err := db.database.Query(statement)
 	if err != nil {
 		fmt.Println("Error getting messages: ", err)
@@ -63,5 +63,15 @@ func (db *Database) GetMessages() []MessageData {
 		messages = append(messages, MessageData{Id: id, Username: username, Message: message, Timestamp: timestamp})
 	}
 
+	reverse(messages)
+
 	return messages
+}
+
+func reverse (arr []MessageData) {
+	var length int = len(arr)
+
+	for i := 0; i < length/2; i++ {
+		arr[i], arr[length-i-1] = arr[length-i-1], arr[i]
+	}
 }
