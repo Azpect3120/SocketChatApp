@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" id="page">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,6 +18,22 @@
                 Live Chat
             </h1>
             <p class="text-white" id="notification"></p>
+            <div>
+                <input
+                    type="text"
+                    name="enterRoomCode"
+                    class="border border-primary-500 rounded-md p-2 bg-transparent text-white outline-none"
+                    placeholder="Enter room code..."
+                    id="enterRoomCode"
+                    maxlength="6"
+                />
+                <button
+                    class="rounded-md bg-primary-500 px-3 py-2 mx-4 text-white"
+                    onclick="changeRoom()"
+                >
+                    Enter
+                </button>
+            </div>
             <button
                 class="text-xl mx-5 px-2 py-1 rounded-md text-red-500 hover:bg-red-300 hover:text-red-700 transition-all duration-100"
                 hx-get="/logout"
@@ -53,11 +69,52 @@
             </div>
         </div>
 
-        <script src="/static/scripts/sockets.js"></script>
         <script>
+            const room = "{{.Room}}";
             const data = JSON.parse("{{ .MessagesJSON }}");
+
+            let socket;
+
+            const connectWebSocket = () => {
+                socket = new WebSocket("ws://" + window.location.host + "/ws");
+
+                socket.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.room == room) {
+                        createElement(data.username, data.message, new Date(data.timestamp));
+                    }
+                };
+
+                socket.onerror = (e) => {
+                    console.error("WebSocket error:", e);
+                    document.getElementById("notification").textContent = "Socket error!";
+                };
+
+                socket.onclose = (e) => {
+                    e.wasClean ? console.log(`Closed cleanly, code=${e.code}, reason=${e.reason}`) : console.error(`Connection died (not clean)`);
+                };
+
+                socket.onopen = (e) => {
+                    console.log("WebSocket connection opened:", e);
+                    document.getElementById("notification").textContent = "Connected!";
+                };
+            }
+
+            const sendMessage = (username) => {
+                const input = document.getElementById("input");
+
+                if (socket.readyState === WebSocket.OPEN) {
+                    const data = JSON.stringify({ username, message: input.value, timestamp: new Date(), room });
+                    socket.send(data);
+                    input.value = "";
+                } else {
+                    console.error("Websocket is not connected!");
+                }
+            };
+
+            connectWebSocket();
+
             data.forEach((msg) => {
-                console.log(msg);
                 createElement(
                     msg.username,
                     msg.message,
@@ -102,6 +159,11 @@
                     msg.innerHTML = `<p class="my-2 text-primary-300"><span class="text-xs text-white">${formattedTimestamp}</span> <span class="font-semibold">${sender}</span> >> ${message} </p>`;
                 }
                 list.appendChild(msg);
+            }
+
+            function changeRoom () {
+                const id = document.getElementById("enterRoomCode").value;
+                window.location.href = `/home/${id}`
             }
 
         </script>

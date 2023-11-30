@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/gob"
+	"net/http"
 	"path/filepath"
 
 	"github.com/Azpect3120/ChatApp/database"
@@ -65,7 +66,8 @@ func (s *Server) SetupRoutes() {
 	s.Router.GET("/", RenderIndexPage)
 	s.Router.GET("/login", RenderLoginPage)
 	s.Router.GET("/signup", RenderSignupPage)
-	s.Router.GET("/home", func(ctx *gin.Context) { RenderHomePage(ctx, s.Database)} )
+	s.Router.GET("/home", func(ctx *gin.Context) { ctx.Redirect(http.StatusTemporaryRedirect, "/home/100000") })
+	s.Router.GET("/home/:id", func(ctx *gin.Context) { RenderHomePage(ctx, s.Database)} )
 
 	s.Router.POST("/users", CreateUser)
 	s.Router.POST("/login", VerifyUser)

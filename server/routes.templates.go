@@ -2,8 +2,8 @@ package server
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/Azpect3120/ChatApp/database"
 	"github.com/gin-contrib/sessions"
@@ -25,6 +25,7 @@ func RenderSignupPage(ctx *gin.Context) {
 type HomeData struct {
 	User         User
 	MessagesJSON string
+	Room         string
 }
 
 func RenderHomePage(ctx *gin.Context, db *database.Database) {
@@ -34,7 +35,9 @@ func RenderHomePage(ctx *gin.Context, db *database.Database) {
 		ctx.Redirect(307, "/login")
 		return
 	}
-	messages := db.GetMessages()
+	room := ctx.Param("id")
+
+	messages := db.GetMessages(room)
 
 	messagesJSON, err := json.Marshal(messages)
 	if err != nil {
@@ -42,6 +45,8 @@ func RenderHomePage(ctx *gin.Context, db *database.Database) {
 		ctx.Redirect(307, "/login")
 		return
 	}
-	data := &HomeData{User: user, MessagesJSON: string(messagesJSON)}
+
+
+	data := &HomeData{User: user, MessagesJSON: string(messagesJSON), Room: room}
 	ctx.HTML(http.StatusOK, "home.html", data)
 }

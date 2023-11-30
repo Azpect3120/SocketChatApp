@@ -59,7 +59,7 @@ func CreateUser(ctx *gin.Context) {
 	session.Set("user", authResponse.User)
 	session.Save()
 
-	ctx.Header("HX-Redirect", "/home")
+	ctx.Header("HX-Redirect", "/home/100000")
 	ctx.JSON(200, gin.H{ "status": 200 })
 }
 
@@ -105,7 +105,7 @@ func VerifyUser (ctx *gin.Context) {
 	session.Set("user", authResponse.User)
 	session.Save()
 
-	ctx.Header("HX-Redirect", "/home")
+	ctx.Header("HX-Redirect", "/home/100000")
 	ctx.JSON(200, gin.H{ "status": 200 })
 }
 

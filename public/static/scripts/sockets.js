@@ -4,6 +4,7 @@ const connectWebSocket = () => {
     socket = new WebSocket("ws://" + window.location.host + "/ws");
 
     socket.onmessage = (event) => {
+        console.log("MESSAGED");
         const data = JSON.parse(event.data);
         createElement(data.username, data.message, new Date(data.timestamp));
     };
@@ -23,11 +24,12 @@ const connectWebSocket = () => {
     };
 }
 
-const sendMessage = (username) => {
+const sendMessage = (username, room) => {
     const input = document.getElementById("input");
+    console.log(room);
 
     if (socket.readyState === WebSocket.OPEN) {
-        const data = JSON.stringify({ username, message: input.value, timestamp: new Date() });
+        const data = JSON.stringify({ username, message: input.value, timestamp: new Date(), room });
         socket.send(data);
         input.value = "";
     } else {
